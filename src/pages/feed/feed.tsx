@@ -9,9 +9,6 @@ import { fetchFeeds } from '../../services/slices/feedsSlice';
 export const Feed: FC = () => {
   /** TODO: взять переменную из стора */
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchFeeds());
-  }, []);
   const orders: TOrder[] = useSelector((state) => state.feeds.orders);
 
   if (!orders.length) {

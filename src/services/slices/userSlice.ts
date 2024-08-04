@@ -60,6 +60,14 @@ export const getOrderByNumberThunk = createAsyncThunk(
   }
 );
 
+export const checkIsUserLogged = createAsyncThunk(
+  'constructor/checkIsUserLogged',
+  async function () {
+    const response = await getUserApi();
+    return response;
+  }
+);
+
 export type TUserState = {
   userInfo: TUser;
   isLoggedIn: boolean;
@@ -145,6 +153,15 @@ const userSlice = createSlice({
       .addCase(getAllUserOrdersThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.errorMessage = action.error.message as string;
+      })
+      .addCase(checkIsUserLogged.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userInfo = action.payload.user;
+        state.isLoggedIn = true;
+      })
+      .addCase(checkIsUserLogged.rejected, (state, action) => {
+        state.errorMessage = action.error.message as string;
+        state.isLoading = false;
       });
   }
 });

@@ -3,17 +3,29 @@ import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useSelector } from '../../services/store';
-import { useParams, Params } from 'react-router-dom';
+import { useParams, Params, useLocation } from 'react-router-dom';
+import { useDispatch } from '../../services/store';
+import { getOrders } from '../../services/slices/orderSlice';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
-  const feedOrders = useSelector((state) => state.feeds.orders);
+  const location = useLocation();
+  const dispatch = useDispatch();
+  let orders;
+  if (location.pathname.includes('feed')) {
+    orders = useSelector((state) => state.feeds.orders);
+  } else {
+    const isOrdersExist = useSelector((state) => state.order.orderList);
+    if (isOrdersExist.length === 0) {
+      dispatch(getOrders());
+    }
+    orders = useSelector((state) => state.order.orderList);
+  }
   const { number } = useParams<Params>();
   if (!number) {
     return;
   }
-  const orderData = feedOrders.find((el) => +el.number === +number);
-
+  const orderData = orders.find((el) => +el.number === +number);
   const ingredients: TIngredient[] = useSelector(
     (state) => state.ingredients.ingredientsData
   );

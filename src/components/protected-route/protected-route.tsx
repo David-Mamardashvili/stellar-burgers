@@ -1,26 +1,32 @@
-import React, { FC, ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import React from 'react';
 import { useSelector } from '../../services/store';
-import { Preloader } from '@ui';
-import { LoggedIn } from '../../stories/Header.stories';
 
-type TProtectedRoute = {
-  children: ReactNode;
-  isProtected?: boolean;
+type ProtectedRouteProps = {
+  publicRoute?: boolean;
+  children: React.ReactElement;
 };
 
-export const ProtectedRoute: FC<TProtectedRoute> = ({
-  children,
-  isProtected
-}) => {
-  const isLoading = useSelector((state) => state.user.isLoading);
+export const ProtectedRoute = ({
+  publicRoute,
+  children
+}: ProtectedRouteProps) => {
+  const location = useLocation();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
-  if (isLoading) {
-    return <Preloader />;
+  if (publicRoute) {
+    if (isLoggedIn) {
+      const from = location.state?.from || { pathname: '/' };
+      return <Navigate replace to={from} />;
+      // return <Navigate replace to='/' state={{ from: location }} />;
+    } else {
+      return children;
+    }
   }
-  if (!isLoggedIn && isProtected) {
-    return <Navigate to='/login' />;
+
+  if (!isLoggedIn) {
+    return <Navigate replace to='/login' state={{ from: location }} />;
   }
+
   return children;
 };
