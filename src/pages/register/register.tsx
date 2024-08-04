@@ -18,12 +18,6 @@ export const Register: FC = () => {
     dispatch(registerUser({ email, password, name: userName }));
   };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/login');
-    }
-  }, [isLoggedIn]);
-
   return (
     <RegisterUI
       errorText={error?.toString()}

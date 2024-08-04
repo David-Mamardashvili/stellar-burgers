@@ -17,12 +17,6 @@ export const Login: FC = () => {
     dispatch(loginUser({ email, password }));
   };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/');
-    }
-  }, [isLoggedIn]);
-
   return (
     <LoginUI
       errorText={error?.toString()}

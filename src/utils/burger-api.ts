@@ -95,7 +95,6 @@ export const getOrdersApi = () =>
       authorization: getCookie('accessToken')
     } as HeadersInit
   }).then((data) => {
-    console.log('=== data burger-api.ts [98] ===', data);
     if (data?.success) return data.orders;
     return Promise.reject(data);
   });
@@ -116,7 +115,6 @@ export const orderBurgerApi = (data: string[]) =>
       ingredients: data
     })
   }).then((data) => {
-    console.log('=== data burger-api.ts [118] ===', data);
     if (data?.success) return data;
     return Promise.reject(data);
   });
@@ -174,7 +172,6 @@ export const loginUserApi = (data: TLoginData) =>
   })
     .then((res) => checkResponse<TAuthResponse>(res))
     .then((data) => {
-      console.log(data);
       if (data?.success) return data;
       return Promise.reject(data);
     });
