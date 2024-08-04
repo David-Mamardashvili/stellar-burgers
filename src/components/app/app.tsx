@@ -116,7 +116,9 @@ const App = () => {
                   title={`#${location.pathname.match(/\d+/)}`}
                   onClose={handleOnClose}
                 >
-                  <OrderInfo />
+                  <ProtectedRoute>
+                    <OrderInfo />
+                  </ProtectedRoute>
                 </Modal>
               }
             />
