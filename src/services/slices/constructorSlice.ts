@@ -5,7 +5,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 import { TIngredient, TConstructorIngredient, TOrder } from '@utils-types';
-import { orderBurgerApi } from '@api';
+import { orderBurgerApi } from '../../utils/burger-api';
 
 export const saveBurger = createAsyncThunk(
   'constructor/saveBurger',
@@ -15,7 +15,7 @@ export const saveBurger = createAsyncThunk(
   }
 );
 
-type TConstructorState = {
+export type TConstructorState = {
   isLoading: boolean;
   constructorItems: {
     bun: TConstructorIngredient | null;

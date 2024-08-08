@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
-import { getOrderByNumberApi, getOrdersApi } from '@api';
+import { getOrderByNumberApi, getOrdersApi } from '../../utils/burger-api';
 
 type TOrderState = {
   orderList: TOrder[];
   currentOrder: TOrder | null;
-  isRequesting: boolean;
+  isLoading: boolean;
   lastResponse: null;
   errorMessage: string | null;
 };
@@ -13,7 +13,7 @@ type TOrderState = {
 export const initialState: TOrderState = {
   orderList: [],
   currentOrder: null,
-  isRequesting: false,
+  isLoading: false,
   lastResponse: null,
   errorMessage: null
 };
@@ -42,29 +42,29 @@ export const orderSlice = createSlice({
     builder
       .addCase(fetchOneOrder.pending, (state) => {
         state.errorMessage = null;
-        state.isRequesting = true;
+        state.isLoading = true;
       })
       .addCase(fetchOneOrder.fulfilled, (state, action) => {
         state.errorMessage = null;
-        state.isRequesting = false;
+        state.isLoading = false;
         state.currentOrder = action.payload.orders[0];
       })
       .addCase(fetchOneOrder.rejected, (state, action) => {
         state.errorMessage = action.error.message as string;
-        state.isRequesting = false;
+        state.isLoading = false;
       })
       .addCase(getOrders.pending, (state) => {
         state.errorMessage = null;
-        state.isRequesting = true;
+        state.isLoading = true;
       })
       .addCase(getOrders.fulfilled, (state, action) => {
         state.errorMessage = null;
-        state.isRequesting = false;
+        state.isLoading = false;
         state.orderList = action.payload;
       })
       .addCase(getOrders.rejected, (state, action) => {
         state.errorMessage = action.error.message as string;
-        state.isRequesting = false;
+        state.isLoading = false;
       });
   }
 });

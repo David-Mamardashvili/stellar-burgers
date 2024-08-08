@@ -11,7 +11,7 @@ import {
   updateUserApi,
   logoutApi,
   getOrderByNumberApi
-} from '@api';
+} from '../../utils/burger-api';
 
 export const registerUser = createAsyncThunk(
   'user/registerUser',
@@ -46,16 +46,9 @@ export const updateUser = createAsyncThunk(
 );
 
 export const getAllUserOrdersThunk = createAsyncThunk(
-  'constructor/getOrderByNumberThunk',
+  'constructor/getAllUserOrdersThunk',
   async function () {
     const response = await getOrdersApi();
-    return response;
-  }
-);
-export const getOrderByNumberThunk = createAsyncThunk(
-  'constructor/getOrderByNumberThunk',
-  async function (orderData: number) {
-    const response = await getOrderByNumberApi(orderData);
     return response;
   }
 );
@@ -71,7 +64,7 @@ export const checkIsUserLogged = createAsyncThunk(
 export type TUserState = {
   userInfo: TUser;
   isLoggedIn: boolean;
-  errorMessage: string;
+  errorMessage: string | null;
   isLoading: boolean;
   orderData: TOrder | null;
   allUserOrders: TOrder[];
@@ -80,7 +73,7 @@ export type TUserState = {
 export const initialState: TUserState = {
   userInfo: { email: '', name: '' },
   isLoggedIn: false,
-  errorMessage: '',
+  errorMessage: null,
   isLoading: false,
   orderData: null,
   allUserOrders: []
@@ -93,13 +86,13 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
+        state.errorMessage = null;
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userInfo = action.payload.user;
         setCookie('accessToken', action.payload.accessToken);
-        localStorage.setItem('accessToken', action.payload.accessToken);
         state.isLoggedIn = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -107,13 +100,13 @@ const userSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(loginUser.pending, (state) => {
+        state.errorMessage = null;
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userInfo = action.payload.user;
         setCookie('accessToken', action.payload.accessToken);
-        localStorage.setItem('accessToken', action.payload.accessToken);
         state.isLoggedIn = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -121,6 +114,7 @@ const userSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(logoutUser.pending, (state) => {
+        state.errorMessage = null;
         state.isLoading = true;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
@@ -131,8 +125,10 @@ const userSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.errorMessage = action.error.message as string;
+        state.isLoading = false;
       })
       .addCase(updateUser.pending, (state) => {
+        state.errorMessage = null;
         state.isLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
@@ -142,8 +138,10 @@ const userSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.errorMessage = action.error.message as string;
+        state.isLoading = false;
       })
       .addCase(getAllUserOrdersThunk.pending, (state) => {
+        state.errorMessage = null;
         state.isLoading = true;
       })
       .addCase(getAllUserOrdersThunk.fulfilled, (state, action) => {
@@ -151,8 +149,12 @@ const userSlice = createSlice({
         state.allUserOrders = action.payload;
       })
       .addCase(getAllUserOrdersThunk.rejected, (state, action) => {
-        state.isLoading = false;
         state.errorMessage = action.error.message as string;
+        state.isLoading = false;
+      })
+      .addCase(checkIsUserLogged.pending, (state) => {
+        state.errorMessage = null;
+        state.isLoading = true;
       })
       .addCase(checkIsUserLogged.fulfilled, (state, action) => {
         state.isLoading = false;
